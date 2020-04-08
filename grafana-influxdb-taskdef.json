@@ -1,0 +1,138 @@
+{
+  "volumes" : [
+    {
+      "host" : {
+        "sourcePath" : "/data/grafana/dashboards"
+      },
+      "name" : "grafana-dashboards"
+    },
+    {
+      "host" : {
+        "sourcePath" : "/data/grafana/custom.ini"
+      },
+      "name" : "grafana-config"
+    },
+    {
+      "host" : {
+        "sourcePath" : "/data/provisioning"
+      },
+      "name" : "grafana-provisioning"
+    },
+    {
+      "host" : {
+        "sourcePath" : "/data/influxdbdata"
+      },
+      "name" : "influxdb-data"
+    }
+  ],
+
+  "containerDefinitions": [
+    {
+      "name": "grafana",
+      "image": "grafana/grafana:6.3.4",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 443
+        }
+      ],
+      "memory": 1024,
+      "cpu": 2048,
+      "environment": [
+        {
+          "name": "GF_SECURITY_ADMIN_USER",
+          "value": "amol"
+        },
+        {
+          "name": "GF_SECURITY_ADMIN_PASSWORD",
+          "value": "amol"
+        },
+        {
+          "name": "GF_INSTALL_PLUGINS",
+          "value": "grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource"
+        },
+        {
+          "name": "INFLUXDB_USER",
+          "value": "amol"
+        },
+        {
+          "name": "INFLUXDB_PASSWORD",
+          "value": "amol"
+        },
+        {
+          "name": "INFLUXDB_DATA_PORT",
+          "value": "8086"
+        },
+        {
+          "name": "INFLUXDB_URL",
+          "value": "http://localhost:8086"
+        },
+        {
+          "name": "INFLUXDB_DB",
+          "value": "Atop_Uploads"
+        }
+      ],
+      "mountPoints": [
+        {
+          "containerPath": "/var/lib/grafana/dashboards",
+          "sourceVolume": "grafana-dashboards"
+        },
+        {
+          "containerPath": "/etc/grafana/custom.ini",
+          "sourceVolume": "grafana-config"
+        },
+        {
+          "containerPath": "/etc/grafana/provisioning",
+          "sourceVolume": "grafana-provisioning"
+        }
+      ]
+    },
+
+
+    {
+      "name": "influxdb",
+      "image": "influxdb",
+      "portMappings": [
+        {
+          "containerPort": 8086,
+          "hostPort": 80
+        }
+      ],
+      "memory": 4096,
+      "cpu": 4096,
+      "environment":[
+        {
+          "name": "INFLUXDB_ADMIN_USER",
+          "value": "amol"
+        },
+        {
+          "name": "INFLUXDB_ADMIN_PASSWORD",
+          "value": "amol"
+        },
+        {
+          "name": "INFLUXDB_DATA_ENGINE",
+          "value": "tsm1"
+        },
+        {
+          "name": "INFLUXDB_REPORTING_DISABLED",
+          "value": "false"
+        },
+        {
+          "name": "INFLUXDB_DB",
+          "value": "Atop_Uploads"
+        }
+      ],
+
+      "mountPoints": [
+        {
+          "containerPath": "/var/lib/influxdb",
+          "sourceVolume": "influxdb-data"
+        }
+      ]
+    }
+
+
+  ],
+
+  "family": "web"
+}
