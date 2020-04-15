@@ -38,6 +38,10 @@
       ],
       "memory": 1024,
       "cpu": 2048,
+      "healthCheck": {
+        "command": [ "CMD-SHELL", "curl -G http://localhost:3000/api/health || exit 1" ],
+        "interval": 10
+      },
       "environment": [
         {
           "name": "GF_SECURITY_ADMIN_USER",
@@ -91,7 +95,7 @@
 
     {
       "name": "influxdb",
-      "image": "influxdb",
+      "image": "influxdb:1.7.7",
       "portMappings": [
         {
           "containerPort": 8086,
@@ -100,6 +104,22 @@
       ],
       "memory": 4096,
       "cpu": 4096,
+      "healthCheck": {
+        "command": [ "CMD-SHELL", "curl -G http://localhost:8086/ping || exit 1" ],
+        "interval": 10
+      },
+      "ulimits": [
+        {
+          "name": "memlock",
+          "hardLimit": 819200000,
+          "softLimit": 819200000
+        },
+        {
+          "name": "nofile",
+          "hardLimit": 64000,
+          "softLimit": 64000
+        }
+      ],
       "environment":[
         {
           "name": "INFLUXDB_ADMIN_USER",
@@ -134,5 +154,5 @@
 
   ],
 
-  "family": "web"
+  "family": "influxdb-grafana"
 }
